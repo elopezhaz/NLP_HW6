@@ -8,6 +8,7 @@ from transformers import get_scheduler
 from transformers import AutoModelForSequenceClassification
 import argparse
 import subprocess
+import matplotlib.pyplot as plt
 
 
 def print_gpu_memory():
@@ -127,6 +128,10 @@ def train(mymodel, num_epochs, train_dataloader, validation_dataloader, device, 
 
     loss = torch.nn.CrossEntropyLoss()
 
+    # Graphing
+    epochs_list = []
+    training_accuracies = []
+
     for epoch in range(num_epochs):
 
         # put the model in training mode (important that this is done each epoch,
@@ -170,12 +175,27 @@ def train(mymodel, num_epochs, train_dataloader, validation_dataloader, device, 
             train_accuracy.add_batch(predictions=predictions, references=batch['labels'])
 
         # print evaluation metrics
-        print(f" ===> Epoch {epoch + 1}")
-        print(f" - Average training metrics: accuracy={train_accuracy.compute()}")
+        curr_epoch = epoch + 1
+        print(f" ===> Epoch {curr_epoch}")
+        training_accuracy = train_accuracy.compute()
+        print(f" - Average training metrics: accuracy={training_accuracy}")
+        epochs_list.append(curr_epoch)
+        training_accuracies.append(training_accuracy['accuracy'])
 
         # normally, validation would be more useful when training for many epochs
         val_accuracy = evaluate_model(mymodel, validation_dataloader, device)
         print(f" - Average validation metrics: accuracy={val_accuracy}")
+
+    # make final graph
+    plt.plot(epochs_list, training_accuracies)
+
+    plt.xlim(1, 20)
+    plt.ylim(0, 1)
+    plt.xlabel('epoch number')
+    plt.ylabel('training accuracy')
+    plt.title('epoch vs training accuracy')
+
+    plt.show()
 
 
 def pre_process(model_name, batch_size, device, small_subset):
