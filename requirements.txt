@@ -11,3 +11,4 @@ Pillow~=9.4.0
 setuptools~=57.0.0
 packaging~=23.0
 pyparsing~=3.0.9
+--upgrade typing-extensions
