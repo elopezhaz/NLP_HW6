@@ -14,7 +14,7 @@
 module load anaconda
 
 # init virtual environment if needed
-# conda create -n toy_classification_env_3.8 python=3.8
+conda create -n toy_classification_env_3.8 python=3.8
 
 conda update -n base -c defaults conda
 conda activate toy_classification_env_3.8 # open the Python environment
